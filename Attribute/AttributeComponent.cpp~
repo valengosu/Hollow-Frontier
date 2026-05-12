@@ -1,0 +1,55 @@
+#include "AttributeComponent.h"
+#include "GameplayTag.h"
+#include "../UI/USurvivalHUDWidget.h"
+#include "../UI/SurvivalGI.h"
+#include "Attribute.h"
+#include "../Character/SurvivalCharacter.h"
+
+UAttributeComponent::UAttributeComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UAttributeComponent::OnTimerTick()
+{
+	if (AbilitySystemComponent->HasMatchingGameplayTag(TAG_Character_Dead))
+	{
+		return;
+	}
+	
+	Attribute->ChangeAttribute(TAG_Attribute_Food, -1);
+	Attribute->ChangeAttribute(TAG_Attribute_Water, -1);
+	
+	if (Attribute->GetFood() == 0 || Attribute->GetWater() == 0)
+	{
+		Attribute->ChangeAttribute(TAG_Attribute_Hp, -51);
+	}
+	
+	if (Attribute->GetHp() == 0)
+	{
+		AbilitySystemComponent->AddLooseGameplayTag(TAG_Character_Dead);
+		Cast<ASurvivalCharacter>(GetOwner())->Die();
+	}
+}
+
+void UAttributeComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	APlayerController* PC = Cast<APlayerController>(Cast<APawn>(GetOwner())->GetController());
+	USurvivalGI* GI = Cast<USurvivalGI>(GetWorld()->GetGameInstance());
+	GI->CreateUI(PC);
+	
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UAttribute::GetHpAttribute()).AddUObject(GI->SurvivalHUDWidget, &USurvivalHUDWidget::OnHpChange);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UAttribute::GetFoodAttribute()).AddUObject(GI->SurvivalHUDWidget, &USurvivalHUDWidget::OnFoodChange);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UAttribute::GetWaterAttribute()).AddUObject(GI->SurvivalHUDWidget, &USurvivalHUDWidget::OnWaterChange);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UAttribute::GetEnergyAttribute()).AddUObject(GI->SurvivalHUDWidget, &USurvivalHUDWidget::OnEnergyChange);
+	
+	GetWorld()->GetTimerManager().SetTimer(PermanentTimerHandle, this, &UAttributeComponent::OnTimerTick, 1.0f, true);
+}
+
+void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
