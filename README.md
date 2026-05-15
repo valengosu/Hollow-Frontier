@@ -39,3 +39,4 @@ The system is designed to support scalable base-building workflows while keeping
 * Snap-point based construction
 * Placement validation
 * Modular structure architecture
+![Building System](99d187c2-8b61-4978-90ea-984b3345a1d5.png)
