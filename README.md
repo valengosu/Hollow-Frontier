@@ -1,5 +1,8 @@
 # Survival System Demo
 
+Gameplay Demo
+https://youtu.be/50lgfa2PuQ0
+
 ## **Tree Interaction System**
 
 The world uses Unreal foliage instances for efficient rendering.
