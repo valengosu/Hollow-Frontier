@@ -2,7 +2,7 @@
 
 ## 🎥 System play Video
 
-[![Video](https://youtu.be/50lgfa2PuQ0)
+[![Gameplay Demo](https://img.youtube.com/vi/50lgfa2PuQ0/maxresdefault.jpg)](https://youtu.be/50lgfa2PuQ0)
 
 ## **Tree Interaction System**
 
